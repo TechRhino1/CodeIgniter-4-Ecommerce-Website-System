@@ -59,10 +59,30 @@ class Admin extends BaseController
     public function view_product()
     {
         $db = db_connect();
-        //$query['cat']=$db->table('category')->get()->getResult();
-        //$query['subcat']=$db->table('subcat')->join('category', 'category.cat_id = subcat.cat_id')->get()->getResult();
-        $query['product']=$db->table('product')->join('subcat', 'subcat.sub_id = product.p_subid')->join('category', 'category.cat_id = subcat.cat_id')->get()->getResult();
+        $query['cat']=$db->table('category')->get()->getResult();
+        $query['subcat']=$db->table('subcat')->join('category', 'category.cat_id = subcat.cat_id')->get()->getResult();
+        $query['product']=$db->table('product')->join('subcat', 'subcat.sub_id = product.p_subid')
+        ->join('category', 'category.cat_id = subcat.cat_id')->get()->getResult();
+        
         return view('admin/add_product',$query);
+    }
+    public function subt_ajax()
+    {
+        $db = db_connect();
+        $cat_id=$this->request->getpost('cat_id');
+        $subcat=$db->table('subcat')->where('cat_id',$cat_id)->get()->getResult();
+         
+        echo ' <div class="mb-3">
+        <label for="pwd" class="form-label">Sub Category type:</label>
+        <select name="subcat" id="subcat" required class="form-control" >
+        <option value="">-SELECT-</option>';
+        foreach($subcat as $sub)
+        {
+            echo '<option value="'.$sub->sub_id.'">'.$sub->sub_name.'</option>';
+        }
+        echo '</select>';
+        echo '</div>';
+        
     }
 }
 
