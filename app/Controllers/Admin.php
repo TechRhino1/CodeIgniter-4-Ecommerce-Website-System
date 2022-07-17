@@ -2,8 +2,27 @@
 
 namespace App\Controllers;
 
+
+use App\Models\Admin_Model;
+
+
+
+
+
 class Admin extends BaseController
 {
+    public function __construct()
+    {
+        
+
+        $db = db_connect();
+        $this->admin_model = new Admin_Model();
+       // $AdminModel = new Admin_Model();
+    }
+    
+    //
+    //constructors initialize the database connections
+    
     public function index()
     {
         //return view('admin/head');
@@ -84,6 +103,51 @@ class Admin extends BaseController
         echo '</div>';
         
     }
+    public function pro_insert()
+    {
+
+        $fname = $_FILES['img']['name'];
+        $date = date('Y-m-d-H-i-s');
+        $dest = "images/rrr/" . $date . $fname;
+        $src = $_FILES['img']['tmp_name'];
+        //move_uploaded_file($src,$dest);
+        copy($src, $dest);
+           
+
+
+        $cat=$this->request->getpost('cat');
+        $subcat=$this->request->getpost('subcat');
+        $pname=$this->request->getpost('pname');
+        $price=$this->request->getpost('price');
+        $dis=$this->request->getpost('dis');
+        $data=array(
+            //	p_id	p_catid	p_subid	p_name	p_disc	p_image	p_price	
+
+            'p_catid'=>$cat,
+            'p_subid'=>$subcat,
+            'p_name'=>$pname,
+            'p_disc'=>$dis,
+            'p_image'=>$dest,
+            'p_price'=>$price
+        );
+        
+        //$ins=$db ->table('product')->insert($data);
+        $userId = $this->admin_model->insert_data('product',$data);
+        return redirect()->to(base_url('Admin/view_product'));
+    }
+    /**if ($uploadOk == 0) {
+    echo "Sorry, your file was not uploaded.";
+// if everything is ok, try to upload file
+} else {
+    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+        echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+    } else {
+        echo "Sorry, there was an error uploading your file.";
+    }
+} */
+
+
+
 }
 
 
